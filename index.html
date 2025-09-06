@@ -67,6 +67,13 @@
   height: 100%;
   object-fit: cover;
 }
+    .badge.web {background:#132b4c;color:#8ab4f8;}
+.badge.pwn {background:#3a1d1d;color:#ff9999;}
+.badge.reverse {background:#2e1d3a;color:#d0a6ff;}
+.badge.dfir {background:#1d2e1d;color:#9ff0b3;}
+.badge.crypto {background:#1d2e3a;color:#9fddff;}
+.badge.forensics {background:#3a2e1d;color:#ffd699;}
+
 
   </style>
 </head>
@@ -129,12 +136,13 @@
   <script>
     // Sample VM data (small subset). Replace with server data in a real app.
     const vms = [
-      {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',flags:2,writeups:2},
-      {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',flags:3,writeups:3},
-      {id:3,name:'Chimera',creator:'Saidakbarxon',os:'linux',size:'2.5GB',difficulty:'medium',flags:1,writeups:1},
-      {id:4,name:'Build',creator:'HYH',os:'windows',size:'6.9GB',difficulty:'hard',flags:5,writeups:5},
-      {id:5,name:'Lower6',creator:'suraxddq',os:'linux',size:'1.2GB',difficulty:'easy',flags:3,writeups:3}
-    ];
+  {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',flags:2,writeups:2,category:'web'},
+  {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',flags:3,writeups:3,category:'pwn'},
+  {id:3,name:'Chimera',creator:'Saidakbarxon',os:'linux',size:'2.5GB',difficulty:'medium',flags:1,writeups:1,category:'reverse'},
+  {id:4,name:'Build',creator:'HYH',os:'windows',size:'6.9GB',difficulty:'hard',flags:5,writeups:5,category:'dfir'},
+  {id:5,name:'Lower6',creator:'suraxddq',os:'linux',size:'1.2GB',difficulty:'easy',flags:3,writeups:3,category:'crypto'}
+];
+
 
     const grid = document.getElementById('grid');
     const searchInp = document.getElementById('searchInp');
@@ -144,6 +152,18 @@
     function badgeForDiff(d){
       return `<span class="difficulty d-${d}">${d.charAt(0).toUpperCase()+d.slice(1)}</span>`;
     }
+    function iconForCategory(cat){
+  switch(cat){
+    case 'web': return '🌐';
+    case 'pwn': return '💥';
+    case 'reverse': return '🔁';
+    case 'dfir': return '🕵️';
+    case 'crypto': return '🔒';
+    case 'forensics': return '🧪';
+    default: return '❓';
+  }
+}
+
 
     function render(list){
       grid.innerHTML = '';
@@ -151,20 +171,22 @@
       for(const vm of list){
         const el = document.createElement('div');el.className='card';
         el.innerHTML = `
-          <div class="meta">
-            <div class="os">${vm.os==='linux'?'🐧':'🪟'}</div>
-            <div style="flex:1">
-              <div class="name">${vm.name}</div>
-              <div class="small">by ${vm.creator} • ${vm.size}</div>
-            </div>
-            <div>${badgeForDiff(vm.difficulty)}</div>
-          </div>
-          <div class="badges">
-            <div class="badge">${vm.flags} flags</div>
-            <div class="badge">${vm.writeups} writeups</div>
-            <div class="badge">VM ID: ${vm.id}</div>
-          </div>
-        `;
+  <div class="meta">
+    <div class="os">${vm.os==='linux'?'🐧':'🪟'}</div>
+    <div style="flex:1">
+      <div class="name">${vm.name}</div>
+      <div class="small">by ${vm.creator} • ${vm.size}</div>
+    </div>
+    <div>${badgeForDiff(vm.difficulty)}</div>
+  </div>
+  <div class="badges">
+    <div class="badge">${vm.flags} flags</div>
+    <div class="badge">${vm.writeups} writeups</div>
+    <div class="badge">VM ID: ${vm.id}</div>
+    <div class="badge">${iconForCategory(vm.category)} ${vm.category}</div>
+  </div>
+`;
+    
         grid.appendChild(el);
       }
     }
