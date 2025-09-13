@@ -142,6 +142,7 @@
     const grid = document.getElementById('grid');
     const statsText = document.getElementById('statsText');
     const statsOS = document.getElementById('statsOS');
+    const searchInp = document.getElementById('searchInp');
     let activeFilter = 'all';
 
     function badgeForDiff(d){
@@ -198,6 +199,31 @@
       const winCount = vms.filter(v=>v.os==='windows').length;
       statsOS.textContent = `النظام: لينكس (${linuxCount}) • ويندوز (${winCount})`;
     }
+
+    // فلترة الصعوبة
+    const filters = document.getElementById('difficultyFilters');
+    filters.addEventListener('click',(e)=>{
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      [...filters.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilter = chip.dataset.d;
+      applyFilters();
+    });
+
+    // البحث + الفلترة
+    searchInp.addEventListener('input',()=>applyFilters());
+    function applyFilters(){
+      const q = searchInp.value.trim().toLowerCase();
+      let out = vms.filter(vm=>{
+        if(activeFilter!=='all' && vm.difficulty!==activeFilter) return false;
+        if(q==='') return true;
+        return vm.name.toLowerCase().includes(q) || vm.creator.toLowerCase().includes(q);
+      });
+      render(out);
+    }
+
+    // عرض أولي
     render(vms);
 
     // نافذة إضافة جهاز
