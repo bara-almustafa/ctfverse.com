@@ -13,10 +13,11 @@
 
     header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
     .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:44px;height:44px;background:linear-gradient(135deg,#22c1c3,#fdbb2d);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#07203a;font-weight:700}
+    .logo{width:44px;height:44px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .logo img{width:100%;height:100%;object-fit:cover}
     .title{font-size:20px;font-weight:700}
     .actions{display:flex;gap:10px;align-items:center}
-    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:6px 10px;border-radius:6px;color:#e6eef8;cursor:pointer;font-size:12px}
     .btn.primary{background:linear-gradient(90deg,#2dd4bf,#60a5fa);color:#041025;border:none}
 
     .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}
@@ -34,8 +35,9 @@
     .os{width:34px;height:34px;border-radius:6px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-weight:700}
     .name{font-weight:700;color:#eaf6ff}
     .small{font-size:13px;color:var(--muted)}
-    .badges{display:flex;gap:6px;margin-top:8px}
+    .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
     .badge{padding:6px 8px;border-radius:6px;font-size:12px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);color:var(--muted)}
+    .badge a{text-decoration:none;color:#8ab4f8}
     .difficulty{padding:6px 8px;border-radius:6px;font-weight:700}
     .d-low{background:#073b2f;color:#9ff0d3}
     .d-easy{background:#1f3b6f;color:#9fc6ff}
@@ -52,38 +54,13 @@
     .form-row input,.form-row select{flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6f6ff}
 
     @media (max-width:600px){.controls{flex-direction:column}.actions{display:none}}
-    .logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-    .badge.web {background:#132b4c;color:#8ab4f8;}
-.badge.pwn {background:#3a1d1d;color:#ff9999;}
-.badge.reverse {background:#2e1d3a;color:#d0a6ff;}
-.badge.dfir {background:#1d2e1d;color:#9ff0b3;}
-.badge.crypto {background:#1d2e3a;color:#9fddff;}
-.badge.forensics {background:#3a2e1d;color:#ffd699;}
-
-
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-       <div class="logo">
-  <img src="logo.png" alt="CTFverse Logo" />
-</div>
+        <div class="logo"><img src="logo.png" alt="CTFverse Logo" /></div>
         <div>
           <div class="title">CTFverse — Offensive Security Playground</div>
           <div class="small">Community-submitted vulnerable VMs & writeups</div>
@@ -96,9 +73,7 @@
     </header>
 
     <div class="controls">
-      <div class="search">
-        <input id="searchInp" placeholder="Search by name, author, tag..." />
-      </div>
+      <div class="search"><input id="searchInp" placeholder="Search by name, author, tag..." /></div>
       <div class="filters" id="difficultyFilters">
         <div class="chip active" data-d="all">All</div>
         <div class="chip" data-d="low">Low</div>
@@ -106,131 +81,151 @@
         <div class="chip" data-d="medium">Medium</div>
         <div class="chip" data-d="hard">Hard</div>
       </div>
-      <div style="margin-left:auto" class="small">144 VMs • 832 Writeups</div>
+      <div style="margin-left:auto" class="small" id="statsText"></div>
     </div>
 
-    <div class="stats">
-      <div>OS: Linux (136) • Windows (8)</div>
-      <div>Order: Newest</div>
-    </div>
+    <div class="stats" id="statsOS"></div>
 
     <div class="grid" id="grid"></div>
 
-    <footer>Made for learning — this is a clone demo. Data is static and for demo purposes only.</footer>
+    <footer>Made for learning — this is a demo. Data is static and for demo purposes only.</footer>
   </div>
 
-  <!-- modal -->
-  <div class="modal" id="modal">
+  <!-- VM Submission Modal -->
+  <div class="modal" id="vmModal">
     <div class="dialog">
       <h3 style="margin-top:0">Submit a new VM</h3>
       <div class="form-row"><input placeholder="Name" id="vmName"/></div>
       <div class="form-row"><input placeholder="Creator" id="vmCreator"/></div>
-      <div class="form-row"><select id="vmDiff"><option value="low">Low</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
+      <div class="form-row">
+        <select id="vmDiff">
+          <option value="low">Low</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="form-row"><input placeholder="Category" id="vmCategory"/></div>
+      <div class="form-row"><input placeholder="Download URL" id="vmLink"/></div>
+      <div class="form-row"><input placeholder="Writeup URL (optional)" id="vmWriteup"/></div>
+      <div class="form-row"><input placeholder="Flag (inside {...})" id="vmFlag"/></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button class="btn" id="cancelBtn">Cancel</button>
+        <button class="btn" id="cancelVm">Cancel</button>
         <button class="btn primary" id="submitVm">Submit</button>
       </div>
     </div>
   </div>
 
-  <script>
-    // Sample VM data (small subset). Replace with server data in a real app.
-    const vms = [
-  {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',flags:2,writeups:2,category:'web'},
-  {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',flags:3,writeups:3,category:'pwn'},
-  {id:3,name:'Chimera',creator:'Saidakbarxon',os:'linux',size:'2.5GB',difficulty:'medium',flags:1,writeups:1,category:'reverse'},
-  {id:4,name:'Build',creator:'HYH',os:'windows',size:'6.9GB',difficulty:'hard',flags:5,writeups:5,category:'dfir'},
-  {id:5,name:'Lower6',creator:'suraxddq',os:'linux',size:'1.2GB',difficulty:'easy',flags:3,writeups:3,category:'crypto'}
-];
+  <!-- Flag Submission Modal -->
+  <div class="modal" id="flagModal">
+    <div class="dialog">
+      <h3 style="margin-top:0">Submit Flag</h3>
+      <div id="flagVmName" class="small" style="margin-bottom:8px"></div>
+      <div class="form-row">
+        <input placeholder="Enter flag in format ctfverse{...}" id="flagInput"/>
+      </div>
+      <div id="flagMessage" class="small" style="margin-bottom:8px;color:var(--muted)"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn" onclick="closeFlagModal()">Cancel</button>
+        <button class="btn primary" onclick="checkFlag()">Submit</button>
+      </div>
+    </div>
+  </div>
 
+  <script>
+    // Sample VM dataset
+    const vms = [
+      {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',flags:1,writeups:1,category:'web',link:'#',writeup:'#',flag:'first_flag'},
+      {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',flags:1,writeups:0,category:'pwn',link:'#',writeup:'',flag:'game_root'}
+    ];
 
     const grid = document.getElementById('grid');
-    const searchInp = document.getElementById('searchInp');
-    const filters = document.getElementById('difficultyFilters');
+    const statsText = document.getElementById('statsText');
+    const statsOS = document.getElementById('statsOS');
     let activeFilter = 'all';
 
     function badgeForDiff(d){
       return `<span class="difficulty d-${d}">${d.charAt(0).toUpperCase()+d.slice(1)}</span>`;
     }
     function iconForCategory(cat){
-  switch(cat){
-    case 'web': return '🌐';
-    case 'pwn': return '💥';
-    case 'reverse': return '🔁';
-    case 'dfir': return '🕵️';
-    case 'crypto': return '🔒';
-    case 'forensics': return '🧪';
-    default: return '❓';
-  }
-}
-
-
+      switch(cat){
+        case 'web': return '🌐'; case 'pwn': return '🕹'; case 'reverse': return '🔁'; case 'dfir': return '🕵️';
+        case 'crypto': return '🔒'; case 'forensics': return '🧪'; case 'ai': return '🤖'; case 'mobile': return '📱';
+        case 'coding': return '💻'; case 'hardware': return '🔧'; case 'ics': return '⚙'; case 'misc': return '📂';
+        case 'osint': return '🔎'; case 'secure': return '🛡'; default: return '❓';
+      }
+    }
     function render(list){
       grid.innerHTML = '';
       if(list.length===0){grid.innerHTML = '<div style="color:var(--muted)">No VMs found.</div>';return}
       for(const vm of list){
         const el = document.createElement('div');el.className='card';
         el.innerHTML = `
-  <div class="meta">
-    <div class="os">${vm.os==='linux'?'🐧':'🪟'}</div>
-    <div style="flex:1">
-      <div class="name">${vm.name}</div>
-      <div class="small">by ${vm.creator} • ${vm.size}</div>
-    </div>
-    <div>${badgeForDiff(vm.difficulty)}</div>
-  </div>
-  <div class="badges">
-    <div class="badge">${vm.flags} flags</div>
-    <div class="badge">${vm.writeups} writeups</div>
-    <div class="badge">VM ID: ${vm.id}</div>
-    <div class="badge">${iconForCategory(vm.category)} ${vm.category}</div>
-  </div>
-`;
-    
+          <div class="meta">
+            <div class="os">${vm.os==='linux'?'🐧':'🪟'}</div>
+            <div style="flex:1"><div class="name">${vm.name}</div>
+              <div class="small">by ${vm.creator} • ${vm.size}</div></div>
+            <div>${badgeForDiff(vm.difficulty)}</div>
+          </div>
+          <div class="badges">
+            <div class="badge"><button class="btn" onclick="openFlagBox(${vm.id})">🏴 Submit Flag</button></div>
+            <div class="badge"><a href="${vm.link}" target="_blank">⬇ Download</a></div>
+            ${vm.writeup ? `<div class="badge"><a href="${vm.writeup}" target="_blank">📑 Writeup</a></div>` : ''}
+            <div class="badge">${iconForCategory(vm.category)} ${vm.category}</div>
+          </div>`;
         grid.appendChild(el);
       }
+      statsText.textContent = `${vms.length} VMs • ${vms.reduce((a,v)=>a+v.writeups,0)} Writeups`;
+      const linuxCount = vms.filter(v=>v.os==='linux').length;
+      const winCount = vms.filter(v=>v.os==='windows').length;
+      statsOS.textContent = `OS: Linux (${linuxCount}) • Windows (${winCount})`;
     }
-
-    // initial render
     render(vms);
 
-    // search & filter
-    searchInp.addEventListener('input',()=>applyFilters());
-    filters.addEventListener('click',(e)=>{
-      const chip = e.target.closest('.chip');if(!chip) return;
-      [...filters.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
-      chip.classList.add('active');
-      activeFilter = chip.dataset.d;
-      applyFilters();
-    });
-
-    function applyFilters(){
-      const q = searchInp.value.trim().toLowerCase();
-      let out = vms.filter(vm=>{
-        if(activeFilter!=='all' && vm.difficulty!==activeFilter) return false;
-        if(q==='') return true;
-        return vm.name.toLowerCase().includes(q) || vm.creator.toLowerCase().includes(q);
-      });
-      render(out);
-    }
-
-    // modal submit
-    const modal = document.getElementById('modal');
-    document.getElementById('newVmBtn').addEventListener('click',()=>modal.classList.add('open'));
-    document.getElementById('cancelBtn').addEventListener('click',()=>modal.classList.remove('open'));
+    // Modal: VM Submit
+    const vmModal = document.getElementById('vmModal');
+    document.getElementById('newVmBtn').addEventListener('click',()=>vmModal.classList.add('open'));
+    document.getElementById('cancelVm').addEventListener('click',()=>vmModal.classList.remove('open'));
     document.getElementById('submitVm').addEventListener('click',()=>{
       const name = document.getElementById('vmName').value.trim();
       const creator = document.getElementById('vmCreator').value.trim();
       const diff = document.getElementById('vmDiff').value;
+      const cat = document.getElementById('vmCategory').value.trim();
+      const link = document.getElementById('vmLink').value.trim();
+      const writeup = document.getElementById('vmWriteup').value.trim();
+      const flag = document.getElementById('vmFlag').value.trim();
       if(!name||!creator){alert('Please fill name and creator');return}
-      const id = vms.length+1;
-      vms.unshift({id,name,creator,os:'linux',size:'1.2GB',difficulty:diff,flags:0,writeups:0});
-      applyFilters();
-      modal.classList.remove('open');
-      document.getElementById('vmName').value='';document.getElementById('vmCreator').value='';
+      const subject = encodeURIComponent("New VM Submission: "+name);
+      const body = encodeURIComponent(`Name: ${name}\nCreator: ${creator}\nDifficulty: ${diff}\nCategory: ${cat}\nDownload: ${link}\nWriteup: ${writeup||'N/A'}\nFlag: ctfverse{${flag||'example'}}`);
+      window.location.href = `mailto:baraa.almustafa@gmail.com?subject=${subject}&body=${body}`;
+      vmModal.classList.remove('open');
     });
 
-    // external button (demo)
+    // Modal: Flag Submit
+    let currentVmId = null;
+    function openFlagBox(vmId){
+      currentVmId = vmId;
+      const vm = vms.find(v=>v.id===vmId);
+      document.getElementById('flagVmName').textContent = "VM: " + vm.name;
+      document.getElementById('flagInput').value = "";
+      document.getElementById('flagMessage').textContent = "";
+      document.getElementById('flagModal').classList.add('open');
+    }
+    function closeFlagModal(){document.getElementById('flagModal').classList.remove('open');}
+    function checkFlag(){
+      const vm = vms.find(v=>v.id===currentVmId);
+      const userFlag = document.getElementById('flagInput').value.trim();
+      const correctFlag = `ctfverse{${vm.flag}}`;
+      if(userFlag === correctFlag){
+        document.getElementById('flagMessage').style.color = "#9ff0b3";
+        document.getElementById('flagMessage').textContent = "✅ Correct flag!";
+      } else {
+        document.getElementById('flagMessage').style.color = "#ff9999";
+        document.getElementById('flagMessage').textContent = "❌ Incorrect, try again.";
+      }
+    }
+
+    // External button
     document.getElementById('discordBtn').addEventListener('click',()=>window.open('https://discord.gg','_blank'));
   </script>
 </body>
