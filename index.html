@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -8,7 +8,7 @@
   <style>
     :root{--bg:#0f1724;--card:#0b1220;--muted:#98a0b3;--accent:#ff6b6b;--glass:rgba(255,255,255,0.03)}
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,#071129 0%, #07162a 100%);min-height:100vh}
+    body{margin:0;font-family:'Tajawal',ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,#071129 0%, #07162a 100%);min-height:100vh}
     .wrap{max-width:1200px;margin:40px auto;padding:20px}
 
     header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
@@ -22,7 +22,7 @@
 
     .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}
     .search{flex:1;min-width:220px}
-    .search input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#071227;color:#d9eefb}
+    .search input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#071227;color:#d9eefb;text-align:right}
     .filters{display:flex;gap:8px}
     .chip{padding:8px 10px;border-radius:999px;background:var(--card);border:1px solid rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
     .chip.active{background:#0b2940;color:#e6f6ff;border-color:rgba(45,212,191,0.12)}
@@ -51,7 +51,7 @@
     .modal.open{display:flex}
     .dialog{background:#071227;border-radius:10px;padding:18px;max-width:640px;width:100%;border:1px solid rgba(255,255,255,0.04)}
     .form-row{display:flex;gap:8px;margin-bottom:8px}
-    .form-row input,.form-row select{flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6f6ff}
+    .form-row input,.form-row select{flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6f6ff;text-align:right}
 
     @media (max-width:600px){.controls{flex-direction:column}.actions{display:none}}
   </style>
@@ -62,24 +62,24 @@
       <div class="brand">
         <div class="logo"><img src="logo.png" alt="CTFverse Logo" /></div>
         <div>
-          <div class="title">CTFverse — Offensive Security Playground</div>
-          <div class="small">Community-submitted vulnerable VMs & writeups</div>
+          <div class="title">CTFverse — منصة الأمن الهجومي</div>
+          <div class="small">أجهزة افتراضية ضعيفة وشروح مقدمة من المجتمع</div>
         </div>
       </div>
       <div class="actions">
-        <button class="btn" id="newVmBtn">Submit VM</button>
-        <button class="btn primary" id="discordBtn">Join Discord</button>
+        <button class="btn" id="newVmBtn">إضافة جهاز</button>
+        <button class="btn primary" id="discordBtn">انضم إلى ديسكورد</button>
       </div>
     </header>
 
     <div class="controls">
-      <div class="search"><input id="searchInp" placeholder="Search by name, author, tag..." /></div>
+      <div class="search"><input id="searchInp" placeholder="ابحث بالاسم، المؤلف، أو الوسم..." /></div>
       <div class="filters" id="difficultyFilters">
-        <div class="chip active" data-d="all">All</div>
-        <div class="chip" data-d="low">Low</div>
-        <div class="chip" data-d="easy">Easy</div>
-        <div class="chip" data-d="medium">Medium</div>
-        <div class="chip" data-d="hard">Hard</div>
+        <div class="chip active" data-d="all">الكل</div>
+        <div class="chip" data-d="low">سهل جدًا</div>
+        <div class="chip" data-d="easy">سهل</div>
+        <div class="chip" data-d="medium">متوسط</div>
+        <div class="chip" data-d="hard">صعب</div>
       </div>
       <div style="margin-left:auto" class="small" id="statsText"></div>
     </div>
@@ -88,52 +88,52 @@
 
     <div class="grid" id="grid"></div>
 
-    <footer>Made for learning — this is a demo. Data is static and for demo purposes only.</footer>
+    <footer>مخصص للتعلم — هذا نموذج تجريبي.</footer>
   </div>
 
-  <!-- VM Submission Modal -->
+  <!-- نافذة إضافة جهاز -->
   <div class="modal" id="vmModal">
     <div class="dialog">
-      <h3 style="margin-top:0">Submit a new VM</h3>
-      <div class="form-row"><input placeholder="Name" id="vmName"/></div>
-      <div class="form-row"><input placeholder="Creator" id="vmCreator"/></div>
+      <h3 style="margin-top:0">إضافة جهاز جديد</h3>
+      <div class="form-row"><input placeholder="اسم الجهاز" id="vmName"/></div>
+      <div class="form-row"><input placeholder="المُنشئ" id="vmCreator"/></div>
       <div class="form-row">
         <select id="vmDiff">
-          <option value="low">Low</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="low">سهل جدًا</option>
+          <option value="easy">سهل</option>
+          <option value="medium">متوسط</option>
+          <option value="hard">صعب</option>
         </select>
       </div>
-      <div class="form-row"><input placeholder="Category" id="vmCategory"/></div>
-      <div class="form-row"><input placeholder="Download URL" id="vmLink"/></div>
-      <div class="form-row"><input placeholder="Writeup URL (optional)" id="vmWriteup"/></div>
-      <div class="form-row"><input placeholder="Flag (inside {...})" id="vmFlag"/></div>
+      <div class="form-row"><input placeholder="الفئة" id="vmCategory"/></div>
+      <div class="form-row"><input placeholder="رابط التحميل" id="vmLink"/></div>
+      <div class="form-row"><input placeholder="رابط الشرح (اختياري)" id="vmWriteup"/></div>
+      <div class="form-row"><input placeholder="العلم (داخل {...})" id="vmFlag"/></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button class="btn" id="cancelVm">Cancel</button>
-        <button class="btn primary" id="submitVm">Submit</button>
+        <button class="btn" id="cancelVm">إلغاء</button>
+        <button class="btn primary" id="submitVm">إرسال</button>
       </div>
     </div>
   </div>
 
-  <!-- Flag Submission Modal -->
+  <!-- نافذة إرسال العلم -->
   <div class="modal" id="flagModal">
     <div class="dialog">
-      <h3 style="margin-top:0">Submit Flag</h3>
+      <h3 style="margin-top:0">إرسال العلم</h3>
       <div id="flagVmName" class="small" style="margin-bottom:8px"></div>
       <div class="form-row">
-        <input placeholder="Enter flag in format ctfverse{...}" id="flagInput"/>
+        <input placeholder="أدخل العلم بالشكل ctfverse{...}" id="flagInput"/>
       </div>
       <div id="flagMessage" class="small" style="margin-bottom:8px;color:var(--muted)"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button class="btn" onclick="closeFlagModal()">Cancel</button>
-        <button class="btn primary" onclick="checkFlag()">Submit</button>
+        <button class="btn" onclick="closeFlagModal()">إلغاء</button>
+        <button class="btn primary" onclick="checkFlag()">إرسال</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Sample VM dataset
+    // بيانات تجريبية
     const vms = [
       {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',flags:1,writeups:1,category:'web',link:'#',writeup:'#',flag:'first_flag'},
       {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',flags:1,writeups:0,category:'pwn',link:'#',writeup:'',flag:'game_root'}
@@ -145,44 +145,62 @@
     let activeFilter = 'all';
 
     function badgeForDiff(d){
-      return `<span class="difficulty d-${d}">${d.charAt(0).toUpperCase()+d.slice(1)}</span>`;
-    }
-    function iconForCategory(cat){
-      switch(cat){
-        case 'web': return '🌐'; case 'pwn': return '🕹'; case 'reverse': return '🔁'; case 'dfir': return '🕵️';
-        case 'crypto': return '🔒'; case 'forensics': return '🧪'; case 'ai': return '🤖'; case 'mobile': return '📱';
-        case 'coding': return '💻'; case 'hardware': return '🔧'; case 'ics': return '⚙'; case 'misc': return '📂';
-        case 'osint': return '🔎'; case 'secure': return '🛡'; default: return '❓';
+      switch(d){
+        case 'low': return `<span class="difficulty d-low">سهل جدًا</span>`;
+        case 'easy': return `<span class="difficulty d-easy">سهل</span>`;
+        case 'medium': return `<span class="difficulty d-medium">متوسط</span>`;
+        case 'hard': return `<span class="difficulty d-hard">صعب</span>`;
       }
     }
+
+    function iconForCategory(cat){
+      switch(cat){
+        case 'web': return '🌐 ويب';
+        case 'pwn': return '🕹 استغلال';
+        case 'reverse': return '🔁 هندسة عكسية';
+        case 'dfir': return '🕵️ تحليل جنائي';
+        case 'crypto': return '🔒 تشفير';
+        case 'forensics': return '🧪 جنائيات';
+        case 'ai': return '🤖 ذكاء اصطناعي';
+        case 'mobile': return '📱 موبايل';
+        case 'coding': return '💻 برمجة';
+        case 'hardware': return '🔧 عتاد';
+        case 'ics': return '⚙ أنظمة صناعية';
+        case 'misc': return '📂 متنوع';
+        case 'osint': return '🔎 استخبارات مفتوحة';
+        case 'secure coding': return '🛡 برمجة آمنة';
+        default: return '❓ غير معروف';
+      }
+    }
+
     function render(list){
       grid.innerHTML = '';
-      if(list.length===0){grid.innerHTML = '<div style="color:var(--muted)">No VMs found.</div>';return}
+      if(list.length===0){grid.innerHTML = '<div style="color:var(--muted)">لا توجد أجهزة.</div>';return}
       for(const vm of list){
         const el = document.createElement('div');el.className='card';
         el.innerHTML = `
           <div class="meta">
             <div class="os">${vm.os==='linux'?'🐧':'🪟'}</div>
             <div style="flex:1"><div class="name">${vm.name}</div>
-              <div class="small">by ${vm.creator} • ${vm.size}</div></div>
+              <div class="small">بواسطة ${vm.creator} • ${vm.size}</div></div>
             <div>${badgeForDiff(vm.difficulty)}</div>
           </div>
           <div class="badges">
-            <div class="badge"><button class="btn" onclick="openFlagBox(${vm.id})">🏴 Submit Flag</button></div>
-            <div class="badge"><a href="${vm.link}" target="_blank">⬇ Download</a></div>
-            ${vm.writeup ? `<div class="badge"><a href="${vm.writeup}" target="_blank">📑 Writeup</a></div>` : ''}
-            <div class="badge">${iconForCategory(vm.category)} ${vm.category}</div>
+            <div class="badge"><button class="btn" onclick="openFlagBox(${vm.id})">🏴 إرسال العلم</button></div>
+            <div class="badge"><a href="${vm.link}" target="_blank">⬇ تحميل</a></div>
+            ${vm.writeup ? `<div class="badge"><a href="${vm.writeup}" target="_blank">📑 شرح</a></div>` : ''}
+            <div class="badge">${iconForCategory(vm.category)}</div>
           </div>`;
         grid.appendChild(el);
       }
-      statsText.textContent = `${vms.length} VMs • ${vms.reduce((a,v)=>a+v.writeups,0)} Writeups`;
+      statsText.textContent = `${vms.length} جهاز • ${vms.reduce((a,v)=>a+v.writeups,0)} شروح`;
       const linuxCount = vms.filter(v=>v.os==='linux').length;
       const winCount = vms.filter(v=>v.os==='windows').length;
-      statsOS.textContent = `OS: Linux (${linuxCount}) • Windows (${winCount})`;
+      statsOS.textContent = `النظام: لينكس (${linuxCount}) • ويندوز (${winCount})`;
     }
     render(vms);
 
-    // Modal: VM Submit
+    // نافذة إضافة جهاز
     const vmModal = document.getElementById('vmModal');
     document.getElementById('newVmBtn').addEventListener('click',()=>vmModal.classList.add('open'));
     document.getElementById('cancelVm').addEventListener('click',()=>vmModal.classList.remove('open'));
@@ -194,19 +212,19 @@
       const link = document.getElementById('vmLink').value.trim();
       const writeup = document.getElementById('vmWriteup').value.trim();
       const flag = document.getElementById('vmFlag').value.trim();
-      if(!name||!creator){alert('Please fill name and creator');return}
-      const subject = encodeURIComponent("New VM Submission: "+name);
-      const body = encodeURIComponent(`Name: ${name}\nCreator: ${creator}\nDifficulty: ${diff}\nCategory: ${cat}\nDownload: ${link}\nWriteup: ${writeup||'N/A'}\nFlag: ctfverse{${flag||'example'}}`);
+      if(!name||!creator){alert('يرجى إدخال الاسم والمُنشئ');return}
+      const subject = encodeURIComponent("إضافة جهاز جديد: "+name);
+      const body = encodeURIComponent(`الاسم: ${name}\nالمُنشئ: ${creator}\nالصعوبة: ${diff}\nالفئة: ${cat}\nالرابط: ${link}\nالشرح: ${writeup||'لا يوجد'}\nالعلم: ctfverse{${flag||'example'}}`);
       window.location.href = `mailto:baraa.almustafa@gmail.com?subject=${subject}&body=${body}`;
       vmModal.classList.remove('open');
     });
 
-    // Modal: Flag Submit
+    // نافذة إرسال العلم
     let currentVmId = null;
     function openFlagBox(vmId){
       currentVmId = vmId;
       const vm = vms.find(v=>v.id===vmId);
-      document.getElementById('flagVmName').textContent = "VM: " + vm.name;
+      document.getElementById('flagVmName').textContent = "الجهاز: " + vm.name;
       document.getElementById('flagInput').value = "";
       document.getElementById('flagMessage').textContent = "";
       document.getElementById('flagModal').classList.add('open');
@@ -218,14 +236,14 @@
       const correctFlag = `ctfverse{${vm.flag}}`;
       if(userFlag === correctFlag){
         document.getElementById('flagMessage').style.color = "#9ff0b3";
-        document.getElementById('flagMessage').textContent = "✅ Correct flag!";
+        document.getElementById('flagMessage').textContent = "✅ العلم صحيح!";
       } else {
         document.getElementById('flagMessage').style.color = "#ff9999";
-        document.getElementById('flagMessage').textContent = "❌ Incorrect, try again.";
+        document.getElementById('flagMessage').textContent = "❌ العلم غير صحيح، حاول مرة أخرى.";
       }
     }
 
-    // External button
+    // زر ديسكورد
     document.getElementById('discordBtn').addEventListener('click',()=>window.open('https://discord.gg','_blank'));
   </script>
 </body>
