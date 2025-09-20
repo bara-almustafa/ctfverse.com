@@ -26,17 +26,24 @@
     .name{font-weight:700;color:#eaf6ff;font-size:18px}
     .small{font-size:13px;color:#98a0b3}
     .btnlink{background:#1f3b6f;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;font-size:13px;display:inline-block;margin-top:6px}
+    .btnlink.secondary{background:#223249}
     .difficulty{display:inline-block;margin-top:8px;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px}
     .d-low{background:#073b2f;color:#9ff0d3}
     .d-easy{background:#1f3b6f;color:#9fc6ff}
     .d-medium{background:#7a4e1d;color:#ffd8a8}
     .d-hard{background:#3c1220;color:#ffb3c0}
     footer{text-align:center;color:#98a0b3;font-size:13px;padding:15px}
-    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6)}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:999}
     .modal.open{display:flex}
-    .dialog{background:#071227;border-radius:10px;padding:18px;max-width:400px;width:100%;border:1px solid rgba(255,255,255,0.1)}
-    .form-row{margin-bottom:10px}
-    .form-row input{width:100%;padding:8px;border-radius:6px;border:1px solid #333;background:#0b1220;color:#e6eef8}
+    .dialog{background:#071227;border-radius:10px;padding:18px;max-width:720px;width:100%;border:1px solid rgba(255,255,255,0.1)}
+    .form-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+    .form-row input,.form-row textarea,.form-row select{flex:1;padding:8px;border-radius:6px;border:1px solid #333;background:#0b1220;color:#e6eef8}
+    .form-row textarea{min-height:80px;resize:vertical}
+    label{font-size:13px;color:#98a0b3;margin-bottom:4px;display:block}
+    @media (max-width:700px){
+      .dialog{max-width:92%}
+      .card.expanded{grid-column:span 1}
+    }
   </style>
 </head>
 <body>
@@ -45,7 +52,7 @@
       <div class="logo"><img src="logo.png" alt="CTFverse Logo" /></div>
       <div class="title">CTFverse — منصة الأمن الهجومي</div>
     </div>
-    <button class="btn" id="newVmBtn">إضافة جهاز</button>
+    <button class="btn" id="newVmBtn">إرسال جهاز جديد</button>
   </header>
 
   <div class="controls">
@@ -63,13 +70,101 @@
 
   <footer>مخصص للتعلم — نسخة تجريبية</footer>
 
+  <!-- نافذة إضافة / إرسال جهاز (تفتح عند الضغط على "إرسال جهاز جديد") -->
+  <div class="modal" id="vmModal">
+    <div class="dialog" role="dialog" aria-modal="true">
+      <h3 style="margin-top:0">إرسال جهاز جديد</h3>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label>اسم الجهاز</label>
+          <input id="vmName" placeholder="مثال: MyChallenge"/>
+        </div>
+        <div style="width:180px">
+          <label>النظام</label>
+          <select id="vmOS">
+            <option value="linux">لينكس</option>
+            <option value="windows">ويندوز</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label>المُنشئ</label>
+          <input id="vmCreator" placeholder="اسم المُنشئ / الفريق"/>
+        </div>
+        <div style="width:180px">
+          <label>الحجم (اختياري)</label>
+          <input id="vmSize" placeholder="مثال: 2.6GB"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="width:200px">
+          <label>الصعوبة</label>
+          <select id="vmDiff">
+            <option value="low">سهل جدًا</option>
+            <option value="easy">سهل</option>
+            <option value="medium">متوسط</option>
+            <option value="hard">صعب</option>
+          </select>
+        </div>
+        <div style="flex:1">
+          <label>الفئة</label>
+          <input id="vmCategory" placeholder="web / crypto / pwn ..."/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label>رابط التحميل</label>
+          <input id="vmLink" placeholder="https://..."/>
+        </div>
+        <div style="flex:1">
+          <label>رابط الشرح (اختياري)</label>
+          <input id="vmWriteup" placeholder="https://..."/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label>رابط صورة (اختياري)</label>
+          <input id="vmImage" placeholder="رابط لصورة توضيحية (مثال: GitHub)"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label>الوصف (description)</label>
+          <textarea id="vmDescription" placeholder="اكتب وصفًا مختصرًا للتحدي — ماذا يتعلم المستخدم، وما يجب البحث عنه..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label>العلم (داخل {...}) — اختياري</label>
+          <input id="vmFlag" placeholder="مثال: secret_flag"/>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button class="btn" id="cancelVm">إلغاء</button>
+        <button class="btn primary" id="submitVm">إرسال عبر البريد</button>
+      </div>
+
+      <p style="color:#98a0b3;margin-top:10px;font-size:13px">سيُفتح عميل البريد الافتراضي مع رسالة مُعدة مسبقاً لإرسالها إلى baraa.almustafa@gmail.com. (إذا أردت إرسال تلقائي بدون عميل البريد — تحتاج خدمة/خادم خلفي)</p>
+    </div>
+  </div>
+
   <!-- نافذة إرسال العلم -->
   <div class="modal" id="flagModal">
     <div class="dialog">
       <h3>إرسال العلم</h3>
-      <div id="flagVmName" class="small"></div>
+      <div id="flagVmName" class="small" style="margin-bottom:8px"></div>
       <div class="form-row"><input placeholder="ctfverse{...}" id="flagInput"/></div>
-      <div id="flagMessage" class="small"></div>
+      <div id="flagMessage" class="small" style="margin-top:8px"></div>
       <div style="text-align:right;margin-top:10px">
         <button class="btn" onclick="closeFlagModal()">إلغاء</button>
         <button class="btn primary" onclick="checkFlag()">إرسال</button>
@@ -78,6 +173,7 @@
   </div>
 
   <script>
+    // بيانات تجريبية (10 أجهزة)
     const vms = [
       {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',category:'web',description:'تحدي ويب بسيط للمبتدئين.',link:'#',writeup:'#',flag:'first_flag'},
       {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',category:'pwn',description:'مقدمة لتحديات استغلال الثغرات.',link:'#',writeup:'',flag:'game_root'},
@@ -106,11 +202,15 @@
 
     function render(list){
       grid.innerHTML='';
+      if(!list || list.length===0){
+        grid.innerHTML = '<div style="color:#98a0b3;padding:20px">لا توجد أجهزة.</div>';
+        return;
+      }
       for(const vm of list){
-        const el=document.createElement('div');el.className='card';
+        const el=document.createElement('div'); el.className='card';
         el.innerHTML=`
           <div class="name">${vm.name}</div>
-          <div class="small">بواسطة ${vm.creator} • ${vm.size}</div>
+          <div class="small">بواسطة ${vm.creator} • ${vm.size || '—'}</div>
           ${badgeForDiff(vm.difficulty)}
         `;
         el.addEventListener('click',()=>{
@@ -120,16 +220,21 @@
             el.classList.add('expanded');
             el.innerHTML=`
               <div style="display:flex;justify-content:space-between;align-items:center">
-                <h3>${vm.name}</h3>
-                <button class="btn" onclick="event.stopPropagation();render(vms)">✖</button>
+                <h3 style="margin:0">${vm.name}</h3>
+                <div>
+                  <button class="btn btnlink secondary" onclick="event.stopPropagation();copyLink('${encodeURIComponent(vm.link||'')}')">نسخ رابط</button>
+                  <button class="btn" onclick="event.stopPropagation();render(vms)">✖</button>
+                </div>
               </div>
-              <div class="small">بواسطة ${vm.creator} • ${vm.size}</div>
+              <div class="small" style="margin-top:6px">بواسطة ${vm.creator} • ${vm.size || '—'}</div>
               ${badgeForDiff(vm.difficulty)}
-              <div style="margin:10px 0">${vm.description}</div>
-              <div style="margin-top:10px">الفئة: ${vm.category}</div>
-              <a href="${vm.link}" target="_blank" class="btnlink">⬇ تحميل</a>
-              ${vm.writeup?`<a href="${vm.writeup}" target="_blank" class="btnlink">📑 شرح</a>`:''}
-              <button class="btn primary" onclick="event.stopPropagation();openFlagBox(${vm.id})">🏴 إرسال العلم</button>
+              <div style="margin:10px 0;color:#cde9ff">${vm.description||'لا يوجد وصف.'}</div>
+              <div style="margin-top:6px">الفئة: <strong>${vm.category}</strong></div>
+              <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+                <a href="${vm.link}" target="_blank" class="btnlink">⬇ تحميل</a>
+                ${vm.writeup?`<a href="${vm.writeup}" target="_blank" class="btnlink">📑 شرح</a>`:''}
+                <button class="btn primary" onclick="event.stopPropagation();openFlagBox(${vm.id})">🏴 إرسال العلم</button>
+              </div>
             `;
           }
         });
@@ -137,56 +242,117 @@
       }
     }
 
-    // فلترة
+    // فلترة و بحث
     const filters=document.getElementById('difficultyFilters');
     filters.addEventListener('click',(e)=>{
       const chip=e.target.closest('.chip');
-      if(!chip)return;
+      if(!chip) return;
       [...filters.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
       chip.classList.add('active');
-      activeFilter=chip.dataset.d;
+      activeFilter = chip.dataset.d;
       applyFilters();
     });
     searchInp.addEventListener('input',()=>applyFilters());
 
     function applyFilters(){
-      const q=searchInp.value.trim().toLowerCase();
-      let out=vms.filter(vm=>{
-        if(activeFilter!=='all'&&vm.difficulty!==activeFilter)return false;
-        if(q==='')return true;
-        return vm.name.toLowerCase().includes(q)||
-               vm.creator.toLowerCase().includes(q)||
-               vm.category.toLowerCase().includes(q)||
-               vm.description.toLowerCase().includes(q);
+      const q = (searchInp.value||'').trim().toLowerCase();
+      let out = vms.filter(vm=>{
+        if(activeFilter!=='all' && vm.difficulty !== activeFilter) return false;
+        if(!q) return true;
+        return vm.name.toLowerCase().includes(q) ||
+               (vm.creator||'').toLowerCase().includes(q) ||
+               (vm.category||'').toLowerCase().includes(q) ||
+               (vm.description||'').toLowerCase().includes(q);
       });
       render(out);
     }
 
     render(vms);
 
-    // إرسال العلم
-    let currentVmId=null;
+    // ---------- إرسال جهاز عبر البريد (mailto) ----------
+    const vmModal = document.getElementById('vmModal');
+    document.getElementById('newVmBtn').addEventListener('click', ()=> vmModal.classList.add('open'));
+    document.getElementById('cancelVm').addEventListener('click', ()=> vmModal.classList.remove('open'));
+
+    document.getElementById('submitVm').addEventListener('click', ()=>{
+      const name = document.getElementById('vmName').value.trim();
+      const os = document.getElementById('vmOS').value;
+      const creator = document.getElementById('vmCreator').value.trim();
+      const size = document.getElementById('vmSize').value.trim();
+      const diff = document.getElementById('vmDiff').value;
+      const category = document.getElementById('vmCategory').value.trim();
+      const link = document.getElementById('vmLink').value.trim();
+      const writeup = document.getElementById('vmWriteup').value.trim();
+      const image = document.getElementById('vmImage').value.trim();
+      const description = document.getElementById('vmDescription').value.trim();
+      const flag = document.getElementById('vmFlag').value.trim();
+
+      if(!name || !creator){
+        alert('يرجى إدخال اسم الجهاز والمُنشئ.');
+        return;
+      }
+
+      // جهّز نص الإيميل
+      const to = 'baraa.almustafa@gmail.com';
+      const subject = `إضافة جهاز جديد: ${name}`;
+      let body = `الاسم: ${name}%0A`;
+      body += `النظام: ${os}%0A`;
+      body += `المُنشئ: ${creator}%0A`;
+      body += `الحجم: ${size || '-'}%0A`;
+      body += `الصعوبة: ${diff}%0A`;
+      body += `الفئة: ${category || '-'}%0A%0A`;
+      body += `الوصف:%0A${(description || '-')}%0A%0A`;
+      body += `رابط التحميل: ${link || '-'}%0A`;
+      body += `رابط الشرح: ${writeup || '-'}%0A`;
+      body += `رابط الصورة: ${image || '-'}%0A`;
+      body += `العلم (داخل {...}): ${flag || '-'}%0A%0A`;
+      body += `(أُرسل عبر نموذج الإضافة في واجهة CTFverse)`;
+
+      // افتح عميل البريد (mailto)
+      const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${body}`;
+      // افتح رابط mailto (يفتح عميل البريد عند المستخدم)
+      window.location.href = mailto;
+
+      // اغلاق النموذج
+      vmModal.classList.remove('open');
+
+      // (اختياري) تقدر تضيف هنا إضافة للجهاز مباشرة للمصفوفة vms لو عايز أن يظهر مباشرة في الواجهة:
+      // vms.push({ id: Date.now(), name, creator, os, size, difficulty: diff, category, description, link, writeup, flag });
+      // render(vms);
+    });
+
+    // مساعدة: نسخ رابط
+    function copyLink(urlEncoded){
+      const url = decodeURIComponent(urlEncoded || '');
+      if(!url){ alert('لا يوجد رابط للنسخ.'); return; }
+      navigator.clipboard?.writeText(url).then(()=>alert('تم نسخ الرابط.'), ()=>alert('فشل النسخ.'));
+    }
+
+    // ---------- إرسال العلم ----------
+    let currentVmId = null;
     function openFlagBox(vmId){
-      currentVmId=vmId;
-      const vm=vms.find(v=>v.id===vmId);
-      document.getElementById('flagVmName').textContent="الجهاز: "+vm.name;
-      document.getElementById('flagInput').value="";
-      document.getElementById('flagMessage').textContent="";
+      currentVmId = vmId;
+      const vm = vms.find(v=>v.id===vmId);
+      document.getElementById('flagVmName').textContent = "الجهاز: " + (vm?.name || '');
+      document.getElementById('flagInput').value = '';
+      document.getElementById('flagMessage').textContent = '';
       document.getElementById('flagModal').classList.add('open');
     }
-    function closeFlagModal(){document.getElementById('flagModal').classList.remove('open');}
+    function closeFlagModal(){ document.getElementById('flagModal').classList.remove('open'); }
     function checkFlag(){
-      const vm=vms.find(v=>v.id===currentVmId);
-      const userFlag=document.getElementById('flagInput').value.trim();
-      const correctFlag=`ctfverse{${vm.flag}}`;
-      if(userFlag===correctFlag){
-        document.getElementById('flagMessage').style.color="#9ff0b3";
-        document.getElementById('flagMessage').textContent="✅ العلم صحيح!";
+      const vm = vms.find(v=>v.id===currentVmId);
+      const userFlag = document.getElementById('flagInput').value.trim();
+      const correctFlag = `ctfverse{${vm?.flag || ''}}`;
+      const msgEl = document.getElementById('flagMessage');
+      if(userFlag === correctFlag){
+        msgEl.style.color = "#9ff0b3";
+        msgEl.textContent = "✅ العلم صحيح!";
       } else {
-        document.getElementById('flagMessage').style.color="#ff9999";
-        document.getElementById('flagMessage').textContent="❌ العلم غير صحيح.";
+        msgEl.style.color = "#ff9999";
+        msgEl.textContent = "❌ العلم غير صحيح.";
       }
     }
+
   </script>
 </body>
 </html>
