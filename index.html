@@ -6,126 +6,71 @@
   <title>CTFverse</title>
   <link rel="icon" type="image/png" href="logo.png">
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--muted:#98a0b3;--accent:#ff6b6b;--glass:rgba(255,255,255,0.03)}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:'Tajawal',ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,#071129 0%, #07162a 100%);min-height:100vh}
-    .wrap{max-width:1200px;margin:40px auto;padding:20px}
-
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:44px;height:44px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    body {margin:0;font-family:'Tajawal',sans-serif;background:#0f1724;color:#e6eef8;}
+    header{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#0b1220}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
     .logo img{width:100%;height:100%;object-fit:cover}
-    .title{font-size:20px;font-weight:700}
-    .actions{display:flex;gap:10px;align-items:center}
-    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:6px 10px;border-radius:6px;color:#e6eef8;cursor:pointer;font-size:12px}
-    .btn.primary{background:linear-gradient(90deg,#2dd4bf,#60a5fa);color:#041025;border:none}
-
-    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}
-    .search{flex:1;min-width:220px}
-    .search input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#071227;color:#d9eefb;text-align:right}
+    .title{font-weight:bold;font-size:20px}
+    .btn{background:#1f3b6f;color:#fff;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+    .btn.primary{background:#2dd4bf;color:#041025;font-weight:bold}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;padding:15px}
+    .search{flex:1}
+    .search input{width:100%;padding:8px;border-radius:8px;border:1px solid #222;background:#071227;color:#d9eefb}
     .filters{display:flex;gap:8px}
-    .chip{padding:8px 10px;border-radius:999px;background:var(--card);border:1px solid rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
-    .chip.active{background:#0b2940;color:#e6f6ff;border-color:rgba(45,212,191,0.12)}
-
-    .stats{display:flex;gap:12px;color:var(--muted);font-size:13px;margin-bottom:12px}
-
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.03);}
-    .card .meta{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-    .os{width:34px;height:34px;border-radius:6px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-weight:700}
-    .name{font-weight:700;color:#eaf6ff}
-    .small{font-size:13px;color:var(--muted)}
-    .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-    .badge{padding:6px 8px;border-radius:6px;font-size:12px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);color:var(--muted)}
-    .badge a{text-decoration:none;color:#8ab4f8}
-    .difficulty{padding:6px 8px;border-radius:6px;font-weight:700}
+    .chip{padding:6px 10px;border-radius:999px;background:#0b1220;border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-size:13px;color:#98a0b3}
+    .chip.active{background:#1f3b6f;color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:20px}
+    .card{background:#0b1220;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px;cursor:pointer;transition:all .3s}
+    .card.expanded{grid-column:span 2;background:#0d182a}
+    .name{font-weight:700;color:#eaf6ff;font-size:18px}
+    .small{font-size:13px;color:#98a0b3}
+    .btnlink{background:#1f3b6f;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;font-size:13px;display:inline-block;margin-top:6px}
+    .difficulty{display:inline-block;margin-top:8px;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px}
     .d-low{background:#073b2f;color:#9ff0d3}
     .d-easy{background:#1f3b6f;color:#9fc6ff}
     .d-medium{background:#7a4e1d;color:#ffd8a8}
     .d-hard{background:#3c1220;color:#ffb3c0}
-
-    footer{margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
-
-    /* modal */
-    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(6,8,15,0.6),rgba(6,8,15,0.85))}
+    footer{text-align:center;color:#98a0b3;font-size:13px;padding:15px}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6)}
     .modal.open{display:flex}
-    .dialog{background:#071227;border-radius:10px;padding:18px;max-width:640px;width:100%;border:1px solid rgba(255,255,255,0.04)}
-    .form-row{display:flex;gap:8px;margin-bottom:8px}
-    .form-row input,.form-row select{flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6f6ff;text-align:right}
-
-    @media (max-width:600px){.controls{flex-direction:column}.actions{display:none}}
+    .dialog{background:#071227;border-radius:10px;padding:18px;max-width:400px;width:100%;border:1px solid rgba(255,255,255,0.1)}
+    .form-row{margin-bottom:10px}
+    .form-row input{width:100%;padding:8px;border-radius:6px;border:1px solid #333;background:#0b1220;color:#e6eef8}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo"><img src="logo.png" alt="CTFverse Logo" /></div>
-        <div>
-          <div class="title">CTFverse — منصة الأمن الهجومي</div>
-          <div class="small">أجهزة افتراضية وشروح </div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" id="newVmBtn">إضافة جهاز</button>
-        <button class="btn primary" id="discordBtn">انضم إلى ديسكورد</button>
-      </div>
-    </header>
-
-    <div class="controls">
-      <div class="search"><input id="searchInp" placeholder="ابحث بالاسم، المؤلف، أو الوسم..." /></div>
-      <div class="filters" id="difficultyFilters">
-        <div class="chip active" data-d="all">الكل</div>
-        <div class="chip" data-d="low">سهل جدًا</div>
-        <div class="chip" data-d="easy">سهل</div>
-        <div class="chip" data-d="medium">متوسط</div>
-        <div class="chip" data-d="hard">صعب</div>
-      </div>
-      <div style="margin-left:auto" class="small" id="statsText"></div>
+  <header>
+    <div class="brand">
+      <div class="logo"><img src="logo.png" alt="CTFverse Logo" /></div>
+      <div class="title">CTFverse — منصة الأمن الهجومي</div>
     </div>
+    <button class="btn" id="newVmBtn">إضافة جهاز</button>
+  </header>
 
-    <div class="stats" id="statsOS"></div>
-
-    <div class="grid" id="grid"></div>
-
-    <footer>مخصص للتعلم — هذا نموذج تجريبي.</footer>
-  </div>
-
-  <!-- نافذة إضافة جهاز -->
-  <div class="modal" id="vmModal">
-    <div class="dialog">
-      <h3 style="margin-top:0">إضافة جهاز جديد</h3>
-      <div class="form-row"><input placeholder="اسم الجهاز" id="vmName"/></div>
-      <div class="form-row"><input placeholder="المُنشئ" id="vmCreator"/></div>
-      <div class="form-row">
-        <select id="vmDiff">
-          <option value="low">سهل جدًا</option>
-          <option value="easy">سهل</option>
-          <option value="medium">متوسط</option>
-          <option value="hard">صعب</option>
-        </select>
-      </div>
-      <div class="form-row"><input placeholder="الفئة" id="vmCategory"/></div>
-      <div class="form-row"><input placeholder="رابط التحميل" id="vmLink"/></div>
-      <div class="form-row"><input placeholder="رابط الشرح (اختياري)" id="vmWriteup"/></div>
-      <div class="form-row"><input placeholder="العلم (داخل {...})" id="vmFlag"/></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button class="btn" id="cancelVm">إلغاء</button>
-        <button class="btn primary" id="submitVm">إرسال</button>
-      </div>
+  <div class="controls">
+    <div class="search"><input id="searchInp" placeholder="ابحث بالاسم، المؤلف، الفئة، أو الوصف..." /></div>
+    <div class="filters" id="difficultyFilters">
+      <div class="chip active" data-d="all">الكل</div>
+      <div class="chip" data-d="low">سهل جدًا</div>
+      <div class="chip" data-d="easy">سهل</div>
+      <div class="chip" data-d="medium">متوسط</div>
+      <div class="chip" data-d="hard">صعب</div>
     </div>
   </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>مخصص للتعلم — نسخة تجريبية</footer>
 
   <!-- نافذة إرسال العلم -->
   <div class="modal" id="flagModal">
     <div class="dialog">
-      <h3 style="margin-top:0">إرسال العلم</h3>
-      <div id="flagVmName" class="small" style="margin-bottom:8px"></div>
-      <div class="form-row">
-        <input placeholder="أدخل العلم بالشكل ctfverse{...}" id="flagInput"/>
-      </div>
-      <div id="flagMessage" class="small" style="margin-bottom:8px;color:var(--muted)"></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <h3>إرسال العلم</h3>
+      <div id="flagVmName" class="small"></div>
+      <div class="form-row"><input placeholder="ctfverse{...}" id="flagInput"/></div>
+      <div id="flagMessage" class="small"></div>
+      <div style="text-align:right;margin-top:10px">
         <button class="btn" onclick="closeFlagModal()">إلغاء</button>
         <button class="btn primary" onclick="checkFlag()">إرسال</button>
       </div>
@@ -133,144 +78,115 @@
   </div>
 
   <script>
-    // بيانات تجريبية
     const vms = [
-      {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',flags:1,writeups:1,category:'web',link:'#',writeup:'#',flag:'first_flag'},
-      {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',flags:1,writeups:0,category:'pwn',link:'#',writeup:'',flag:'game_root'}
+      {id:1,name:'Misstep',creator:'minidump',os:'linux',size:'2.6GB',difficulty:'low',category:'web',description:'تحدي ويب بسيط للمبتدئين.',link:'#',writeup:'#',flag:'first_flag'},
+      {id:2,name:'Open',creator:'Pylon',os:'linux',size:'1.6GB',difficulty:'easy',category:'pwn',description:'مقدمة لتحديات استغلال الثغرات.',link:'#',writeup:'',flag:'game_root'},
+      {id:3,name:'Crypto101',creator:'alice',os:'linux',size:'1.2GB',difficulty:'easy',category:'crypto',description:'تعلم أساسيات التشفير.',link:'#',writeup:'#',flag:'simple_crypto'},
+      {id:4,name:'DarkWin',creator:'h4x0r',os:'windows',size:'3.4GB',difficulty:'medium',category:'reverse',description:'تحليل عكسي على بيئة ويندوز.',link:'#',writeup:'',flag:'win_reversing'},
+      {id:5,name:'StegFun',creator:'secGeek',os:'linux',size:'850MB',difficulty:'low',category:'forensics',description:'إخفاء معلومات داخل صور.',link:'#',writeup:'#',flag:'hidden_bits'},
+      {id:6,name:'RootMe',creator:'pentester',os:'linux',size:'2.9GB',difficulty:'medium',category:'web',description:'رفع الصلاحيات للحصول على root.',link:'#',writeup:'',flag:'root_shell'},
+      {id:7,name:'ICS Control',creator:'scadaGuy',os:'linux',size:'4.1GB',difficulty:'hard',category:'ics',description:'اختراق نظام صناعي للتحكم PLC.',link:'#',writeup:'',flag:'plc_break'},
+      {id:8,name:'MobileX',creator:'droider',os:'linux',size:'1.7GB',difficulty:'easy',category:'mobile',description:'تحدي تحليل تطبيقات أندرويد.',link:'#',writeup:'#',flag:'apk_hack'},
+      {id:9,name:'OSINT Tracker',creator:'investigator',os:'linux',size:'900MB',difficulty:'low',category:'osint',description:'استخدام المصادر المفتوحة لاستخراج معلومات.',link:'#',writeup:'',flag:'find_me'},
+      {id:10,name:'CryptoMaster',creator:'crypt0',os:'linux',size:'2.3GB',difficulty:'hard',category:'crypto',description:'تشفير متقدم باستخدام RSA.',link:'#',writeup:'#',flag:'rsa_factor'}
     ];
 
-    const grid = document.getElementById('grid');
-    const statsText = document.getElementById('statsText');
-    const statsOS = document.getElementById('statsOS');
-    const searchInp = document.getElementById('searchInp');
-    let activeFilter = 'all';
+    const grid=document.getElementById('grid');
+    const searchInp=document.getElementById('searchInp');
+    let activeFilter='all';
 
     function badgeForDiff(d){
       switch(d){
-        case 'low': return `<span class="difficulty d-low">سهل جدًا</span>`;
-        case 'easy': return `<span class="difficulty d-easy">سهل</span>`;
-        case 'medium': return `<span class="difficulty d-medium">متوسط</span>`;
-        case 'hard': return `<span class="difficulty d-hard">صعب</span>`;
-      }
-    }
-
-    function iconForCategory(cat){
-      switch(cat){
-        case 'web': return '🌐 ويب';
-        case 'pwn': return '🕹 استغلال';
-        case 'reverse': return '🔁 هندسة عكسية';
-        case 'dfir': return '🕵️ تحليل جنائي';
-        case 'crypto': return '🔒 تشفير';
-        case 'forensics': return '🧪 جنائيات';
-        case 'ai': return '🤖 ذكاء اصطناعي';
-        case 'mobile': return '📱 موبايل';
-        case 'coding': return '💻 برمجة';
-        case 'hardware': return '🔧 عتاد';
-        case 'ics': return '⚙ أنظمة صناعية';
-        case 'misc': return '📂 متنوع';
-        case 'osint': return '🔎 استخبارات مفتوحة';
-        case 'secure coding': return '🛡 برمجة آمنة';
-        default: return '❓ غير معروف';
+        case 'low':return `<span class="difficulty d-low">سهل جدًا</span>`;
+        case 'easy':return `<span class="difficulty d-easy">سهل</span>`;
+        case 'medium':return `<span class="difficulty d-medium">متوسط</span>`;
+        case 'hard':return `<span class="difficulty d-hard">صعب</span>`;
       }
     }
 
     function render(list){
-      grid.innerHTML = '';
-      if(list.length===0){grid.innerHTML = '<div style="color:var(--muted)">لا توجد أجهزة.</div>';return}
+      grid.innerHTML='';
       for(const vm of list){
-        const el = document.createElement('div');el.className='card';
-        el.innerHTML = `
-          <div class="meta">
-            <div class="os">${vm.os==='linux'?'🐧':'🪟'}</div>
-            <div style="flex:1"><div class="name">${vm.name}</div>
-              <div class="small">بواسطة ${vm.creator} • ${vm.size}</div></div>
-            <div>${badgeForDiff(vm.difficulty)}</div>
-          </div>
-          <div class="badges">
-            <div class="badge"><button class="btn" onclick="openFlagBox(${vm.id})">🏴 إرسال العلم</button></div>
-            <div class="badge"><a href="${vm.link}" target="_blank">⬇ تحميل</a></div>
-            ${vm.writeup ? `<div class="badge"><a href="${vm.writeup}" target="_blank">📑 شرح</a></div>` : ''}
-            <div class="badge">${iconForCategory(vm.category)}</div>
-          </div>`;
+        const el=document.createElement('div');el.className='card';
+        el.innerHTML=`
+          <div class="name">${vm.name}</div>
+          <div class="small">بواسطة ${vm.creator} • ${vm.size}</div>
+          ${badgeForDiff(vm.difficulty)}
+        `;
+        el.addEventListener('click',()=>{
+          if(el.classList.contains('expanded')){
+            render(list);
+          } else {
+            el.classList.add('expanded');
+            el.innerHTML=`
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <h3>${vm.name}</h3>
+                <button class="btn" onclick="event.stopPropagation();render(vms)">✖</button>
+              </div>
+              <div class="small">بواسطة ${vm.creator} • ${vm.size}</div>
+              ${badgeForDiff(vm.difficulty)}
+              <div style="margin:10px 0">${vm.description}</div>
+              <div style="margin-top:10px">الفئة: ${vm.category}</div>
+              <a href="${vm.link}" target="_blank" class="btnlink">⬇ تحميل</a>
+              ${vm.writeup?`<a href="${vm.writeup}" target="_blank" class="btnlink">📑 شرح</a>`:''}
+              <button class="btn primary" onclick="event.stopPropagation();openFlagBox(${vm.id})">🏴 إرسال العلم</button>
+            `;
+          }
+        });
         grid.appendChild(el);
       }
-      statsText.textContent = `${vms.length} جهاز • ${vms.reduce((a,v)=>a+v.writeups,0)} شروح`;
-      const linuxCount = vms.filter(v=>v.os==='linux').length;
-      const winCount = vms.filter(v=>v.os==='windows').length;
-      statsOS.textContent = `النظام: لينكس (${linuxCount}) • ويندوز (${winCount})`;
     }
 
-    // فلترة الصعوبة
-    const filters = document.getElementById('difficultyFilters');
+    // فلترة
+    const filters=document.getElementById('difficultyFilters');
     filters.addEventListener('click',(e)=>{
-      const chip = e.target.closest('.chip');
-      if(!chip) return;
+      const chip=e.target.closest('.chip');
+      if(!chip)return;
       [...filters.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
       chip.classList.add('active');
-      activeFilter = chip.dataset.d;
+      activeFilter=chip.dataset.d;
       applyFilters();
     });
-
-    // البحث + الفلترة
     searchInp.addEventListener('input',()=>applyFilters());
+
     function applyFilters(){
-      const q = searchInp.value.trim().toLowerCase();
-      let out = vms.filter(vm=>{
-        if(activeFilter!=='all' && vm.difficulty!==activeFilter) return false;
-        if(q==='') return true;
-        return vm.name.toLowerCase().includes(q) || vm.creator.toLowerCase().includes(q);
+      const q=searchInp.value.trim().toLowerCase();
+      let out=vms.filter(vm=>{
+        if(activeFilter!=='all'&&vm.difficulty!==activeFilter)return false;
+        if(q==='')return true;
+        return vm.name.toLowerCase().includes(q)||
+               vm.creator.toLowerCase().includes(q)||
+               vm.category.toLowerCase().includes(q)||
+               vm.description.toLowerCase().includes(q);
       });
       render(out);
     }
 
-    // عرض أولي
     render(vms);
 
-    // نافذة إضافة جهاز
-    const vmModal = document.getElementById('vmModal');
-    document.getElementById('newVmBtn').addEventListener('click',()=>vmModal.classList.add('open'));
-    document.getElementById('cancelVm').addEventListener('click',()=>vmModal.classList.remove('open'));
-    document.getElementById('submitVm').addEventListener('click',()=>{
-      const name = document.getElementById('vmName').value.trim();
-      const creator = document.getElementById('vmCreator').value.trim();
-      const diff = document.getElementById('vmDiff').value;
-      const cat = document.getElementById('vmCategory').value.trim();
-      const link = document.getElementById('vmLink').value.trim();
-      const writeup = document.getElementById('vmWriteup').value.trim();
-      const flag = document.getElementById('vmFlag').value.trim();
-      if(!name||!creator){alert('يرجى إدخال الاسم والمُنشئ');return}
-      const subject = encodeURIComponent("إضافة جهاز جديد: "+name);
-      const body = encodeURIComponent(`الاسم: ${name}\nالمُنشئ: ${creator}\nالصعوبة: ${diff}\nالفئة: ${cat}\nالرابط: ${link}\nالشرح: ${writeup||'لا يوجد'}\nالعلم: ctfverse{${flag||'example'}}`);
-      window.location.href = `mailto:baraa.almustafa@gmail.com?subject=${subject}&body=${body}`;
-      vmModal.classList.remove('open');
-    });
-
-    // نافذة إرسال العلم
-    let currentVmId = null;
+    // إرسال العلم
+    let currentVmId=null;
     function openFlagBox(vmId){
-      currentVmId = vmId;
-      const vm = vms.find(v=>v.id===vmId);
-      document.getElementById('flagVmName').textContent = "الجهاز: " + vm.name;
-      document.getElementById('flagInput').value = "";
-      document.getElementById('flagMessage').textContent = "";
+      currentVmId=vmId;
+      const vm=vms.find(v=>v.id===vmId);
+      document.getElementById('flagVmName').textContent="الجهاز: "+vm.name;
+      document.getElementById('flagInput').value="";
+      document.getElementById('flagMessage').textContent="";
       document.getElementById('flagModal').classList.add('open');
     }
     function closeFlagModal(){document.getElementById('flagModal').classList.remove('open');}
     function checkFlag(){
-      const vm = vms.find(v=>v.id===currentVmId);
-      const userFlag = document.getElementById('flagInput').value.trim();
-      const correctFlag = `ctfverse{${vm.flag}}`;
-      if(userFlag === correctFlag){
-        document.getElementById('flagMessage').style.color = "#9ff0b3";
-        document.getElementById('flagMessage').textContent = "✅ العلم صحيح!";
+      const vm=vms.find(v=>v.id===currentVmId);
+      const userFlag=document.getElementById('flagInput').value.trim();
+      const correctFlag=`ctfverse{${vm.flag}}`;
+      if(userFlag===correctFlag){
+        document.getElementById('flagMessage').style.color="#9ff0b3";
+        document.getElementById('flagMessage').textContent="✅ العلم صحيح!";
       } else {
-        document.getElementById('flagMessage').style.color = "#ff9999";
-        document.getElementById('flagMessage').textContent = "❌ العلم غير صحيح، حاول مرة أخرى.";
+        document.getElementById('flagMessage').style.color="#ff9999";
+        document.getElementById('flagMessage').textContent="❌ العلم غير صحيح.";
       }
     }
-
-    // زر ديسكورد
-    document.getElementById('discordBtn').addEventListener('click',()=>window.open('https://discord.gg','_blank'));
   </script>
 </body>
 </html>
